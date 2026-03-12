@@ -164,8 +164,9 @@ static int rtmp_open(URLContext *s, const char *uri, int flags)
     }
 
     RTMP_Init(r);
-    if (s->localaddr) 
-        RTMP_SetLocalAddress(&rt->rtmp, s->localaddr);
+    
+    if (ctx->localaddr) 
+        RTMP_SetLocalAddress(r, ctx->localaddr);
 
     /* This will modify filename by null terminating the URL portion */
     if (!RTMP_SetupURL(r, ctx->filename.str)) {
