@@ -53,6 +53,7 @@ typedef struct LibRTMPContext {
     char *client_buffer_time;
     int live;
     int buffer_size;
+    char *localaddr;
 } LibRTMPContext;
 
 static void rtmp_log(int level, const char *fmt, va_list args)
@@ -163,6 +164,9 @@ static int rtmp_open(URLContext *s, const char *uri, int flags)
     }
 
     RTMP_Init(r);
+    if (s->localaddr) 
+        RTMP_SetLocalAddress(&rt->rtmp, s->localaddr);
+
     /* This will modify filename by null terminating the URL portion */
     if (!RTMP_SetupURL(r, ctx->filename.str)) {
         rc = AVERROR_UNKNOWN;
@@ -280,6 +284,7 @@ static const AVOption options[] = {
 #if CONFIG_NETWORK
     {"rtmp_buffer_size", "set buffer size in bytes", OFFSET(buffer_size), AV_OPT_TYPE_INT, {.i64 = -1}, -1, INT_MAX, DEC|ENC },
 #endif
+    {"rtmp_localaddr", "Local IP address to bind for outgoing RTMP connections", OFFSET(localaddr), AV_OPT_TYPE_STRING, { .str = NULL }, 0, 0, DEC|ENC },
     { NULL },
 };
 
